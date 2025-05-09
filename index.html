@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแจ้งการใช้ห้องประชุมประจำวัน - งานถ่ายทอดการพยาบาล</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #7209b7;
+            --light-color: #f8f9fa;
+            --dark-color: #2b2d42;
+            --available-color: #06d6a0;
+            --occupied-color: #ef476f;
+            --warning-color: #ffd166;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Sarabun', 'Sarabun', 'Sarabun', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom right, #f8f9fa, #e9ecef);
+            color: var(--dark-color);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px 0;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+        
+        header h2 {
+            text-align: center;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            font-weight: 400;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            letter-spacing: 0.5px;
+        }
+        
+        .current-time {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            width: fit-content;
+            margin: 10px auto 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .current-time:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .rooms-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .room-card {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .room-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .room-header {
+            background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.7rem;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .room-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #f72585, #4361ee);
+        }
+        
+        .room-status {
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        
+        .status-available {
+            background-color: var(--available-color);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .status-available::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 60%);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 0.4;
+            }
+        }
+        
+        .status-occupied {
+            background-color: var(--occupied-color);
+            color: white;
+        }
+        
+        .room-details {
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .important-announcement {
+            margin-top: 60px;
+            margin-bottom: 40px;
+            background-color: white;
+            border-left: 6px solid var(--occupied-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .important-announcement::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background-image: radial-gradient(circle, rgba(239, 71, 111, 0.1) 0%, rgba(239, 71, 111, 0) 70%);
+            border-radius: 50%;
+        }
+        
+        .announcement-title {
+            color: var(--occupied-color);
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-bottom: 2px solid rgba(239, 71, 111, 0.3);
+            padding-bottom: 15px;
+            position: relative;
+        }
+        
+        .announcement-title::before {
+            content: '🔔';
+            margin-right: 10px;
+        }
+        
+        .announcement-content {
+            color: #333;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            padding: 0 10px;
+        }
+        
+        .announcement-content p {
+            margin-bottom: 20px;
+        }
+        
+        .announcement-content strong {
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+        
+        .announcement-content ul {
+            margin-left: 25px;
+            margin-bottom: 20px;
+            list-style-type: none;
+        }
+        
+        .announcement-content li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .announcement-content li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .meeting-info {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .meeting-info:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .meeting-info h4 {
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+        
+        .meeting-info p {
+            margin: 8px 0;
+            color: var(--dark-color);
+        }
+        
+        .no-meetings {
+            text-align: center;
+            padding: 25px;
+            color: #6c757d;
+            font-style: italic;
+            background-color: rgba(248, 249, 250, 0.7);
+            border-radius: 10px;
+            border: 1px dashed #dee2e6;
+        }
+        
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            padding: 25px;
+            background: linear-gradient(to right, var(--dark-color), #3a0ca3);
+            color: white;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        footer p {
+            position: relative;
+            z-index: 1;
+            font-size: 1.1rem;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(135deg, rgba(255,255,255,0.05) 25%, transparent 25%, 
+                                transparent 50%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.05) 75%, 
+                                transparent 75%, transparent);
+            background-size: 20px 20px;
+            opacity: 0.2;
+        }
+        
+        @media (max-width: 768px) {
+            .room-card {
+                width: 100%;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            header h2 {
+                font-size: 1.4rem;
+            }
+            
+            .current-time {
+                font-size: 1.2rem;
+                padding: 10px 15px;
+            }
+            
+            .rooms-container {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+            
+            .announcement-title {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (prefers-reduced-motion) {
+            .room-card:hover {
+                transform: none;
+            }
+            
+            .meeting-info:hover {
+                transform: none;
+            }
+            
+            .current-time:hover {
+                transform: none;
+            }
+            
+            @keyframes pulse {
+                0%, 50%, 100% {
+                    opacity: 0.6;
+                }
+            }
+        }
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: var(--light-color);
+        }
+        
+        .meeting-info h4 {
+            margin-bottom: 5px;
+            color: var(--dark-color);
+        }
+        
+        .meeting-info p {
+            margin: 5px 0;
+            color: var(--dark-color);
+        }
+        
+        .no-meetings {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-style: italic;
+        }
+        
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            padding: 20px;
+            background-color: var(--dark-color);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .room-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calendar-check"></i> ระบบแจ้งการใช้ห้องประชุมประจำวัน</h1>
+            <h2><i class="fas fa-hospital-user"></i> งานถ่ายทอดการพยาบาล</h2>
+            <div class="current-time" id="current-time"><i class="fas fa-clock"></i> กำลังโหลดเวลา...</div>
+        </header>
+        
+        <div class="rooms-container" id="rooms-container">
+            <!-- Room cards will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="important-announcement">
+            <h2 class="announcement-title"><i class="fas fa-exclamation-circle"></i> ข่าวประกาศสำคัญ</h2>
+            <div class="announcement-content">
+                <p>ปิดหน่วยงานชั่วคราว เป็นเวลา 3 วัน ตั้งแต่วันที่ 13 -15 พฤษภาคม 2568 เนื่องจากเจ้าหน้าที่งานถ่ายทอดการพยาบาลทุกท่าน จัดโครงการพัฒนาศักยภาพพยาบาลสำเร็จใหม่ ประจำปีงบประมาณ 2568</p>
+                <p><strong>สถานที่จัดงาน:</strong></p>
+                <ul>
+                    <li>ห้องประชุมโยธี ชั้น 11 ในวันที่ 13 - 14 พฤษภาคม 2568</li>
+                    <li>ห้องพิบูลสงคราม ชั้น 12 ในวันที่ 15 พฤษภาคม 2568</li>
+                </ul>
+                <p><strong>หากต้องการติดต่อเจ้าหน้าที่:</strong></p>
+                <ul>
+                    <li>กรณีด่วนมาก: ติดต่อได้ทาง Line ส่วนตัวเท่านั้น</li>
+                    <li>กรณีไม่ด่วน: ติดต่อได้ที่งานถ่ายทอดการพยาบาล ชั้น 9 อาคารเฉลิมพระเกียรติฯ โทร. 78042 ในวันจันทร์ที่ 19 พฤษภาคม 2568 เป็นต้นไป</li>
+                </ul>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 ระบบแจ้งการใช้ห้องประชุมประจำวัน - งานถ่ายทอดการพยาบาล <i class="fas fa-heartbeat"></i></p>
+        </footer>
+    </div>
+
+    <script>
+        // ข้อมูลห้องประชุม (จำลอง)
+        const meetingRooms = [
+            {
+                id: 1,
+                name: "ห้องประชุม GSR",
+                meetings: []
+            },
+            {
+                id: 2,
+                name: "ห้องประชุม SC",
+                meetings: []
+            },
+            {
+                id: 3,
+                name: "ห้องประชุม VC1",
+                meetings: []
+            },
+            {
+                id: 4,
+                name: "ห้องประชุม VC2",
+                meetings: []
+            },
+            {
+                id: 5,
+                name: "ห้องประชุม VC3",
+                meetings: []
+            },
+            {
+                id: 6,
+                name: "ห้องประชุมโยธี ชั้น 11",
+                meetings: [
+		    {
+                        title: "โครงการพัฒนาศักยภาพพยาบาลสำเร็จใหม่",
+			type: "On-site",
+			meet: "None",
+                        date: "2025-05-13",
+                        startTime: "08:00",
+                        endTime: "16:00"
+                    }
+		]
+            }
+        ];
+
+        // อัปเดตเวลาปัจจุบัน
+        function updateCurrentTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('current-time').textContent = now.toLocaleString('th-TH', options);
+        }
+
+        // ตรวจสอบสถานะห้องประชุม (ว่าง/ไม่ว่าง)
+        function checkRoomStatus(meetings) {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0];
+            const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            
+            for (const meeting of meetings) {
+                if (meeting.date === today && meeting.startTime <= currentTime && meeting.endTime > currentTime) {
+                    return {
+                        status: 'occupied',
+                        statusText: 'ไม่ว่าง',
+                        currentMeeting: meeting
+                    };
+                }
+            }
+            
+            return {
+                status: 'available',
+                statusText: 'ว่าง',
+                currentMeeting: null
+            };
+        }
+
+        // สร้างการ์ดห้องประชุม
+        function createRoomCards() {
+            const roomsContainer = document.getElementById('rooms-container');
+            roomsContainer.innerHTML = '';
+            
+            meetingRooms.forEach(room => {
+                const roomStatus = checkRoomStatus(room.meetings);
+                
+                const roomCard = document.createElement('div');
+                roomCard.className = 'room-card';
+                
+                const statusIcon = roomStatus.status === 'available' ? 
+                    '<i class="fas fa-check-circle"></i>' : 
+                    '<i class="fas fa-times-circle"></i>';
+                
+                roomCard.innerHTML = `
+                    <div class="room-header">
+                        <i class="fas fa-door-open"></i> ${room.name}
+                    </div>
+                    <div class="room-status ${roomStatus.status === 'available' ? 'status-available' : 'status-occupied'}">
+                        ${statusIcon} ${roomStatus.statusText}
+                    </div>
+                    <div class="room-details">
+                        ${roomStatus.currentMeeting ? `
+                            <div class="meeting-info">
+                                <h4><i class="fas fa-calendar-day"></i> การประชุมปัจจุบัน:</h4>
+                                <p><strong><i class="fas fa-clipboard"></i> เรื่อง:</strong> ${roomStatus.currentMeeting.title}</p>
+				<p><strong><i class="fas fa-chalkboard-teacher"></i> รูปแบบประชุม:</strong> ${roomStatus.currentMeeting.type}</p>
+				<p><strong><i class="fas fa-desktop"></i> Application ประชุม:</strong> ${roomStatus.currentMeeting.meet} </p>
+                                <p><strong><i class="fas fa-clock"></i> เวลา:</strong> ${roomStatus.currentMeeting.startTime} - ${roomStatus.currentMeeting.endTime} น.</p>
+                            </div>
+                        ` : ''}
+                        
+                        <h3><i class="fas fa-list"></i> การประชุมวันนี้:</h3>
+                        ${getTodayMeetings(room.meetings)}
+                    </div>
+                `;
+                
+                roomsContainer.appendChild(roomCard);
+            });
+        }
+
+        // ดึงการประชุมของวันนี้
+        function getTodayMeetings(meetings) {
+            const today = new Date().toISOString().split('T')[0];
+            const todayMeetings = meetings.filter(meeting => meeting.date === today);
+            
+            if (todayMeetings.length === 0) {
+                return '<div class="no-meetings"><i class="fas fa-calendar-times"></i> ไม่มีการประชุมวันนี้</div>';
+            }
+            
+            return todayMeetings.map(meeting => `
+                <div class="meeting-info">
+                    <h4><i class="fas fa-comments"></i> ${meeting.title}</h4>
+		    <p><strong><i class="fas fa-chalkboard-teacher"></i> รูปแบบ:</strong> ${meeting.type}</p>	
+		    <p><strong><i class="fas fa-desktop"></i> Application ประชุม:</strong> ${meeting.meet} Record</p>
+		    <p><strong><i class="fas fa-calendar-alt"></i> วันที่:</strong> ${formatDate(meeting.date)}</p>
+                    <p><strong><i class="fas fa-hourglass-half"></i> เวลา:</strong> ${meeting.startTime} - ${meeting.endTime} น.</p>
+                </div>
+            `).join('');
+        }
+        // แปลงรูปแบบวันที่
+        function formatDate(dateString) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('th-TH', options);
+        }
+
+        // อัปเดตเวลาและข้อมูลห้องทุก 1 วินาที
+        function startUpdates() {
+            updateCurrentTime();
+            createRoomCards();
+            
+            setInterval(() => {
+                updateCurrentTime();
+                createRoomCards();
+            }, 1000);
+        }
+
+        // เริ่มการทำงานเมื่อโหลดหน้าเว็บ
+        window.onload = startUpdates;
+    </script>
+</body>
+</html>
