@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบแจ้งการใช้ห้องประชุมประจำวัน - งานถ่ายทอดการพยาบาล</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Kanit:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -22,7 +22,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Sarabun', 'Sarabun', 'Sarabun', sans-serif;
+            font-family: 'Prompt', 'Kanit', 'Sarabun', sans-serif;
         }
         
         body {
@@ -32,18 +32,18 @@
         }
         
         .container {
-            max-width: 1300px;
+            max-width: 2400px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px;
         }
         
         header {
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 25px 0;
-            margin-bottom: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px 0;
+            margin-bottom: 60px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -61,73 +61,75 @@
         
         header h1 {
             text-align: center;
-            font-size: 2.8rem;
-            margin-bottom: 10px;
+            font-size: 4rem;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
         
         header h2 {
             text-align: center;
             color: white;
-            margin-bottom: 15px;
-            font-size: 1.8rem;
+            margin-bottom: 25px;
+            font-size: 2.5rem;
             font-weight: 400;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
         
         .current-time {
             text-align: center;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: bold;
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
-            padding: 12px 20px;
+            padding: 18px 30px;
             border-radius: 50px;
             width: fit-content;
-            margin: 10px auto 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
+            margin: 15px auto 0;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
         }
         
         .current-time:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
         
         .rooms-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 35px;
+            margin-top: 60px;
         }
         
         .room-card {
             background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             transition: all 0.4s ease;
             border: 1px solid rgba(0, 0, 0, 0.05);
             height: 100%;
             display: flex;
             flex-direction: column;
+            min-height: 450px;
+            max-width: 450px;
         }
         
         .room-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
         }
         
         .room-header {
             background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
             color: white;
-            padding: 20px;
+            padding: 25px 15px;
             text-align: center;
-            font-size: 1.7rem;
+            font-size: 1.8rem;
             font-weight: bold;
             position: relative;
             overflow: hidden;
@@ -139,15 +141,15 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 4px;
+            height: 5px;
             background: linear-gradient(to right, #f72585, #4361ee);
         }
         
         .room-status {
-            padding: 15px;
+            padding: 18px;
             text-align: center;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             letter-spacing: 1px;
             text-transform: uppercase;
             transition: all 0.3s ease;
@@ -189,20 +191,26 @@
         }
         
         .room-details {
-            padding: 25px;
+            padding: 25px 20px;
             flex: 1;
             display: flex;
             flex-direction: column;
         }
         
+        .room-details h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+        
         .important-announcement {
-            margin-top: 60px;
-            margin-bottom: 40px;
+            margin-top: 80px;
+            margin-bottom: 60px;
             background-color: white;
-            border-left: 6px solid var(--occupied-color);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-left: 8px solid var(--occupied-color);
+            border-radius: 16px;
+            padding: 45px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
         }
@@ -212,55 +220,58 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: 200px;
             background-image: radial-gradient(circle, rgba(239, 71, 111, 0.1) 0%, rgba(239, 71, 111, 0) 70%);
             border-radius: 50%;
         }
         
         .announcement-title {
             color: var(--occupied-color);
-            font-size: 2.2rem;
+            font-size: 3rem;
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 35px;
             font-weight: bold;
-            letter-spacing: 1px;
-            border-bottom: 2px solid rgba(239, 71, 111, 0.3);
-            padding-bottom: 15px;
+            letter-spacing: 2px;
+            border-bottom: 3px solid rgba(239, 71, 111, 0.3);
+            padding-bottom: 20px;
             position: relative;
         }
         
         .announcement-title::before {
             content: '🔔';
-            margin-right: 10px;
+            margin-right: 15px;
+            font-size: 2.5rem;
         }
         
         .announcement-content {
             color: #333;
-            font-size: 1.05rem;
-            line-height: 1.7;
-            padding: 0 10px;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            padding: 0 20px;
         }
         
         .announcement-content p {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .announcement-content strong {
             color: var(--dark-color);
             font-weight: 600;
+            font-size: 1.35rem;
         }
         
         .announcement-content ul {
-            margin-left: 25px;
-            margin-bottom: 20px;
+            margin-left: 35px;
+            margin-bottom: 25px;
             list-style-type: none;
         }
         
         .announcement-content li {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             position: relative;
-            padding-left: 25px;
+            padding-left: 35px;
+            font-size: 1.25rem;
         }
         
         .announcement-content li::before {
@@ -269,51 +280,54 @@
             left: 0;
             color: var(--accent-color);
             font-weight: bold;
+            font-size: 1.3rem;
         }
         
         .meeting-info {
             margin-bottom: 15px;
-            padding: 15px;
+            padding: 15px 12px;
             border-radius: 10px;
             background-color: #f8f9fa;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
             border-left: 4px solid var(--primary-color);
             transition: all 0.3s ease;
         }
         
         .meeting-info:hover {
             transform: translateX(5px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
         }
         
         .meeting-info h4 {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: var(--secondary-color);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .meeting-info p {
-            margin: 8px 0;
+            margin: 6px 0;
             color: var(--dark-color);
+            font-size: 0.95rem;
         }
         
         .no-meetings {
             text-align: center;
-            padding: 25px;
+            padding: 25px 15px;
             color: #6c757d;
             font-style: italic;
             background-color: rgba(248, 249, 250, 0.7);
             border-radius: 10px;
-            border: 1px dashed #dee2e6;
+            border: 2px dashed #dee2e6;
+            font-size: 1rem;
         }
         
         footer {
-            margin-top: 60px;
+            margin-top: 80px;
             text-align: center;
-            padding: 25px;
+            padding: 35px;
             background: linear-gradient(to right, var(--dark-color), #3a0ca3);
             color: white;
-            border-radius: 12px;
+            border-radius: 16px;
             position: relative;
             overflow: hidden;
         }
@@ -321,7 +335,7 @@
         footer p {
             position: relative;
             z-index: 1;
-            font-size: 1.1rem;
+            font-size: 1.3rem;
         }
         
         footer::before {
@@ -336,6 +350,84 @@
                                 transparent 75%, transparent);
             background-size: 20px 20px;
             opacity: 0.2;
+        }
+        
+        @media (max-width: 2200px) {
+            .rooms-container {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 30px;
+            }
+        }
+        
+        @media (max-width: 1920px) {
+            .rooms-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 30px;
+            }
+            
+            .container {
+                max-width: 1800px;
+                padding: 35px;
+            }
+            
+            header h1 {
+                font-size: 3.5rem;
+            }
+            
+            header h2 {
+                font-size: 2.2rem;
+            }
+            
+            .room-header {
+                font-size: 2rem;
+                padding: 28px 20px;
+            }
+            
+            .room-card {
+                min-height: 480px;
+            }
+        }
+        
+        @media (max-width: 1366px) {
+            .rooms-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+            
+            .container {
+                max-width: 1300px;
+                padding: 30px;
+            }
+            
+            header h1 {
+                font-size: 3rem;
+            }
+            
+            header h2 {
+                font-size: 2rem;
+            }
+            
+            .current-time {
+                font-size: 1.8rem;
+                padding: 15px 25px;
+            }
+            
+            .announcement-title {
+                font-size: 2.5rem;
+            }
+            
+            .announcement-content {
+                font-size: 1.2rem;
+            }
+            
+            .room-header {
+                font-size: 1.9rem;
+                padding: 25px 18px;
+            }
+            
+            .room-card {
+                min-height: 460px;
+            }
         }
         
         @media (max-width: 768px) {
@@ -363,6 +455,20 @@
             
             .announcement-title {
                 font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .room-header {
+                font-size: 1.6rem;
+                padding: 20px 15px;
+            }
+            
+            .room-card {
+                min-height: 400px;
+                max-width: none;
             }
         }
         
@@ -427,7 +533,7 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-calendar-check"></i> ระบบแจ้งการใช้ห้องประชุมประจำวัน</h1>
+            <h1><i class="fas fa-calendar-check"></i> ระบบแสดงข้อมูลห้องประชุม</h1>
             <h2><i class="fas fa-hospital-user"></i> งานถ่ายทอดการพยาบาล</h2>
             <div class="current-time" id="current-time"><i class="fas fa-clock"></i> กำลังโหลดเวลา...</div>
         </header>
@@ -455,7 +561,7 @@
                 id: 1,
                 name: "ห้องประชุม GSR",
                 meetings: [
-		    {
+                    {
                         title: "ประชุมงานวิจัย",
 			type: "On-site",
 			meet: "None",
@@ -463,13 +569,13 @@
                         startTime: "08:00",
                         endTime: "16:00"
                     }
-		]
+                ]
             },
             {
                 id: 2,
                 name: "ห้องประชุม SC",
                 meetings: [
-		    {
+                    {
                         title: "ปฐมนิเทศแพทย์ประจำบ้าน กลุ่มงานจักษุวิทยา ประจำปี 2568",
 			type: "On-site",
 			meet: "None",
@@ -477,7 +583,7 @@
                         startTime: "08:00",
                         endTime: "12:00"
                     }
-		]
+                ]
             },
             {
                 id: 3,
@@ -493,20 +599,6 @@
                 id: 5,
                 name: "ห้องประชุม VC3",
                 meetings: []
-            },
-            {
-                id: 6,
-                name: "ห้องประชุม ชั้น 11",
-                meetings: [
-		    {
-                        title: "โครงการพัฒนาศักยภาพพยาบาลสำเร็จใหม่",
-			type: "On-site",
-			meet: "None",
-                        date: "2025-05-13",
-                        startTime: "08:00",
-                        endTime: "16:00"
-                    }
-		]
             }
         ];
 
@@ -609,6 +701,7 @@
                 </div>
             `).join('');
         }
+
         // แปลงรูปแบบวันที่
         function formatDate(dateString) {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
